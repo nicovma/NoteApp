@@ -84,7 +84,7 @@ struct AddCategoryView: View {
                         .shadow(color: viewModel.selectedColor.swiftUIColor.opacity(0.4), radius: 8, x: 0, y: 3)
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(viewModel.name.isEmpty ? "Nombre" : viewModel.name)
+                        Text(viewModel.name.isEmpty ? String(localized: "Nombre") : viewModel.name)
                             .font(.system(size: 16, weight: .bold))
                             .foregroundStyle(LiquidGlass.ink)
                         Text("0 notas")

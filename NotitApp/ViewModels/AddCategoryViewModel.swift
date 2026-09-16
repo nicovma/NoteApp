@@ -22,7 +22,7 @@ final class AddCategoryViewModel: ObservableObject {
 
     func createCategory() async {
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            errorMessage = "El nombre no puede estar vacío"
+            errorMessage = String(localized: "El nombre no puede estar vacío")
             return
         }
         let category = Category(name, color: selectedColor.rawValue)

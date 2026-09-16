@@ -156,10 +156,11 @@ struct GradientPillButtonStyle: ButtonStyle {
 }
 
 extension Date {
-    /// "Hace 2 horas", "Ayer", etc.
-    var relativeDescriptionEs: String {
+    /// "Hace 2 horas" / "2 hours ago", "Ayer" / "Yesterday", etc. — follows
+    /// the app's current language instead of a fixed one.
+    var relativeDescription: String {
         let formatter = RelativeDateTimeFormatter()
-        formatter.locale = Locale(identifier: "es")
+        formatter.locale = .autoupdatingCurrent
         formatter.unitsStyle = .full
         let text = formatter.localizedString(for: self, relativeTo: .now)
         return text.prefix(1).uppercased() + text.dropFirst()
