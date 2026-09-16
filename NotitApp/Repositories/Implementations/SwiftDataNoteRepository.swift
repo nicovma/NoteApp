@@ -27,7 +27,7 @@ final class SwiftDataNoteRepository: NoteRepository {
     }
 
     func fetchAll() async throws -> [Note] {
-        let descriptor = FetchDescriptor<Note>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
+        let descriptor = FetchDescriptor<Note>(sortBy: [SortDescriptor(\.updatedAt, order: .reverse)])
         return try context.fetch(descriptor)
     }
 
@@ -35,7 +35,7 @@ final class SwiftDataNoteRepository: NoteRepository {
         let categoryID = category.id
         let descriptor = FetchDescriptor<Note>(
             predicate: #Predicate { $0.category.id == categoryID },
-            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+            sortBy: [SortDescriptor(\.updatedAt, order: .reverse)]
         )
         return try context.fetch(descriptor)
     }
