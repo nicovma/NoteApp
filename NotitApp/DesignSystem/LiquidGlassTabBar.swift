@@ -50,5 +50,11 @@ struct LiquidGlassTabBar: View {
             .background(isSelected ? LiquidGlass.primary.opacity(0.14) : Color.clear, in: Capsule())
         }
         .buttonStyle(.plain)
+        // A custom tab bar doesn't inherit TabView's built-in "tab, selected"
+        // semantics — combine collapses icon+label into one stop and the
+        // trait restores the selected-state announcement a real TabView
+        // would give for free.
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 }
