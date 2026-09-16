@@ -9,21 +9,34 @@ import SwiftData
 
 @MainActor
 final class SwiftDataNoteRepository: NoteRepository {
+
+    private let context: ModelContext
+
+    init(context: ModelContext) {
+        self.context = context
+    }
+
     func save(_ note: Note) async throws {
-        
+        context.insert(note)
+        try context.save()
     }
-    
+
     func delete(_ note: Note) async throws {
-        
+        context.delete(note)
+        try context.save()
     }
-    
+
     func fetchAll() async throws -> [Note] {
-        return []
+        let descriptor = FetchDescriptor<Note>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
+        return try context.fetch(descriptor)
     }
-    
+
     func fetch(byCategory category: Category) async throws -> [Note] {
-        return []
+        let categoryID = category.id
+        let descriptor = FetchDescriptor<Note>(
+            predicate: #Predicate { $0.category.id == categoryID },
+            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+        )
+        return try context.fetch(descriptor)
     }
-    
-    
 }

@@ -5,7 +5,7 @@
 //  Created by Nicolas Valentini on 27/8/2026.
 //
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 enum CategoryColor: String, CaseIterable, Identifiable {
     case red = "RED"
@@ -18,11 +18,11 @@ enum CategoryColor: String, CaseIterable, Identifiable {
 
     var swiftUIColor: Color {
         switch self {
-        case .red: .red
-        case .blue: .blue
-        case .green: .green
-        case .orange: .orange
-        case .purple: .purple
+        case .red: LiquidGlass.systemRed
+        case .blue: LiquidGlass.systemBlue
+        case .green: LiquidGlass.systemGreen
+        case .orange: LiquidGlass.systemOrange
+        case .purple: LiquidGlass.systemPurple
         }
     }
 }
