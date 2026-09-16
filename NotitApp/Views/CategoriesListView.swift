@@ -125,4 +125,5 @@ struct CategoryRow: View {
         CategoryListViewModel(useCase: MockCategoryUseCase()),
         root: CompositionRoot(modelContext: container.mainContext)
     )
+    .environmentObject(TabBarVisibility())
 }
