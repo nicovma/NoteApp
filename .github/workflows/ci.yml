@@ -11,8 +11,25 @@ jobs:
         with: { xcode-version: '16.4' }
       - name: Build and test
         run: |
-          xcodebuild test -project NotitApp.xcodeproj -scheme NotitApp \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
-            -skipMacroValidation \
-            CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=NO CODE_SIGN_STYLE=Manual \
-            DEVELOPMENT_TEAM="" PROVISIONING_PROFILE_SPECIFIER=""
+          set -o pipefail
+          attempts=3
+          for i in $(seq 1 "$attempts"); do
+            if xcodebuild test -project NotitApp.xcodeproj -scheme NotitApp \
+                -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+                -skipMacroValidation \
+                CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=NO CODE_SIGN_STYLE=Manual \
+                DEVELOPMENT_TEAM="" PROVISIONING_PROFILE_SPECIFIER="" 2>&1 | tee /tmp/xcodebuild.log; then
+              exit 0
+            fi
+            # macos-15 runner images sometimes come up with no iOS simulator
+            # runtime registered for the pinned Xcode version — a known,
+            # transient GitHub Actions image issue (actions/runner-images#12948),
+            # unrelated to this repo. Retry only that specific failure; any
+            # other failure (real test/compile errors) fails immediately.
+            if [ "$i" -lt "$attempts" ] && grep -q "Unable to find a device matching the provided destination specifier" /tmp/xcodebuild.log; then
+              echo "::warning::Simulador no disponible en esta imagen del runner (intento $i/$attempts), reintentando en 30s..."
+              sleep 30
+              continue
+            fi
+            exit 1
+          done
