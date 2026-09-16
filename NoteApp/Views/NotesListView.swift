@@ -6,43 +6,51 @@
 //
 import Foundation
 import SwiftUI
+import SwiftData
 
 struct NotesListView: View {
-    
+
     @StateObject private var viewModel: NoteListViewModel
-    
-    init(_ vm: NoteListViewModel) {
-        _viewModel = StateObject(wrappedValue:vm)
+    private let root: CompositionRoot
+
+    init(_ vm: NoteListViewModel, root: CompositionRoot) {
+        _viewModel = StateObject(wrappedValue: vm)
+        self.root = root
     }
-    
+
     var body: some View {
         NavigationStack {
             Group {
                 switch viewModel.state {
                 case .idle, .loading:
                     ProgressView()
-                    
+
                 case .loaded(let notes):
                     VStack {
                         NavigationLink {
-                            CategoriesListView(CategoryListViewModel(useCase: MockCategoryUseCase()))
+                            CategoriesListView(root.makeCategoryListViewModel(), root: root)
                         } label: {
                             Text("Ver categorias")
                         }
                         .padding()
-                        
+
                         List(notes) { note in
                             NavigationLink(value: note) {
                                 Text(note.title)
                             }
-
                             .listRowBackground(
                                 CategoryColor(rawValue: note.category.color)?.swiftUIColor ?? .gray
                             )
-
+                            .swipeActions {
+                                Button("Eliminar", role: .destructive) {
+                                    Task { await viewModel.delete(note) }
+                                }
+                            }
                         }
                         .navigationDestination(for: Note.self) { note in
-                            NoteDetailView()
+                            NoteDetailView(note: note) {
+                                Task { await viewModel.delete(note) }
+                            }
                         }
                     }
                 case .error(let messageError):
@@ -52,7 +60,7 @@ struct NotesListView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
-                        AddNoteView()
+                        AddNoteView(root.makeAddNoteViewModel())
                     } label: {
                         Image(systemName: "plus")
                     }
@@ -63,10 +71,13 @@ struct NotesListView: View {
                 await viewModel.fetchNotes()
             }
         }
-
     }
 }
 
 #Preview {
-    NotesListView(NoteListViewModel(useCase: MockNoteUseCase()))
+    let container = try! ModelContainer(for: Note.self, Category.self, configurations: .init(isStoredInMemoryOnly: true))
+    NotesListView(
+        NoteListViewModel(useCase: MockNoteUseCase()),
+        root: CompositionRoot(modelContext: container.mainContext)
+    )
 }
