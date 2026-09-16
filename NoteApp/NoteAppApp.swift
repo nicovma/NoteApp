@@ -24,7 +24,13 @@ struct NoteAppApp: App {
     var body: some Scene {
         WindowGroup {
             let root = CompositionRoot(modelContext: modelContainer.mainContext)
-            NotesListView(root.makeNoteListViewModel(), root: root)
+            RootTabView(root: root)
+                // The Liquid Glass design is light-only by intent (pastel
+                // background, hardcoded ink colors) — forcing light mode
+                // here keeps every pushed screen legible regardless of the
+                // system appearance, instead of patching adaptive colors
+                // screen by screen.
+                .preferredColorScheme(.light)
         }
     }
 }
