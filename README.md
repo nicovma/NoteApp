@@ -2,12 +2,19 @@
 
 [![CI](https://github.com/nicovma/NotitApp/actions/workflows/ci.yml/badge.svg)](https://github.com/nicovma/NotitApp/actions/workflows/ci.yml)
 
-A note-taking app with color-coded categories, built with SwiftUI, SwiftData, and Swift Concurrency, using a Clean Architecture split (View / ViewModel / UseCase / Repository) behind protocols throughout.
+A note-taking app with color-coded categories, built with SwiftUI, SwiftData, and Swift Concurrency, using a Clean Architecture split (View / ViewModel / UseCase / Repository) behind protocols throughout, with a custom "Liquid Glass" design system.
+
+<p float="left">
+  <img src="docs/screenshots/notes-list.png" width="260" alt="Notes list, with a note per color-coded category" />
+  <img src="docs/screenshots/categories-list.png" width="260" alt="Categories list" />
+</p>
 
 ## Features
 
-- Create, list, and delete notes — each one tagged to a category, with the category's color shown as the list row background.
+- Create, edit, list, and delete notes — each one tagged to a required category, with the category's color shown as a bar on the card.
 - Create, list, and delete categories, each with a name and a color picked from a fixed palette.
+- Custom "Liquid Glass" design system: translucent glass surfaces over a soft blurred backdrop, a real floating tab bar (switching tabs never re-fetches), correct behavior under both Dark Mode and the "Reduce Transparency" accessibility setting.
+- Localized in Spanish and English (String Catalog), including a real plural rule for the note count on each category.
 - Fully local and offline: no login, no network calls, no setup required beyond opening the project.
 
 ## Architecture
@@ -20,6 +27,7 @@ View ── ViewModel ── UseCase ── Repository ── SwiftData (ModelCo
 - **UseCase** (`NoteUseCase`, `CategoryUseCase`) — thin business layer between ViewModels and Repositories, kept as a protocol so ViewModels are testable against a mock without touching persistence.
 - **ViewModel** — `@MainActor` `ObservableObject`s exposing a `ViewModelState<T>` enum (`idle` / `loading` / `loaded` / `error`) to their View.
 - **View** — SwiftUI, no business logic.
+- **`DesignSystem`** — the "Liquid Glass" look (blurred backdrop, glass surfaces, shared tab bar) as reusable modifiers/components, kept independent of any screen.
 - **`CompositionRoot`** — the single place that wires concrete SwiftData repositories into UseCases into ViewModels. It's the only file in the app that imports SwiftData outside the Repository layer itself, keeping the dependency direction one-way (Views and ViewModels depend on protocols, never on SwiftData directly).
 
 ## Tech stack
