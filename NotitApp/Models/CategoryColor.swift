@@ -25,4 +25,16 @@ enum CategoryColor: String, CaseIterable, Identifiable {
         case .purple: LiquidGlass.systemPurple
         }
     }
+
+    /// User-facing name for VoiceOver — the color swatches otherwise have no
+    /// label at all (`rawValue` is an internal storage code, not copy).
+    var accessibilityName: LocalizedStringKey {
+        switch self {
+        case .red: "Rojo"
+        case .blue: "Azul"
+        case .green: "Verde"
+        case .orange: "Naranja"
+        case .purple: "Violeta"
+        }
+    }
 }
