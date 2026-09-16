@@ -14,6 +14,7 @@ struct NotesListView: View {
     private let root: CompositionRoot
     @State private var searchText = ""
     @State private var path: [Note] = []
+    @FocusState private var isSearchFocused: Bool
 
     init(_ vm: NoteListViewModel, root: CompositionRoot) {
         _viewModel = StateObject(wrappedValue: vm)
@@ -45,6 +46,8 @@ struct NotesListView: View {
                         searchField
                         if filtered.isEmpty {
                             emptyState
+                                .contentShape(Rectangle())
+                                .onTapGesture { isSearchFocused = false }
                         } else {
                             List {
                                 ForEach(filtered) { note in
@@ -66,6 +69,7 @@ struct NotesListView: View {
                             }
                             .listStyle(.plain)
                             .scrollContentBackground(.hidden)
+                            .scrollDismissesKeyboard(.immediately)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -112,6 +116,7 @@ struct NotesListView: View {
                 .foregroundStyle(LiquidGlass.inkSecondary)
             TextField("Buscar", text: $searchText)
                 .foregroundStyle(LiquidGlass.ink)
+                .focused($isSearchFocused)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
