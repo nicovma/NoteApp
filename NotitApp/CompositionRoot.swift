@@ -1,0 +1,46 @@
+//
+//  CompositionRoot.swift
+//  NotitApp
+//
+//  Created by Nicolas Valentini on 27/8/2026.
+//
+import Foundation
+import SwiftData
+
+@MainActor
+final class CompositionRoot {
+
+    private let modelContext: ModelContext
+
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
+    }
+
+    func makeNoteListViewModel() -> NoteListViewModel {
+        NoteListViewModel(useCase: makeNoteUseCase())
+    }
+
+    func makeAddNoteViewModel() -> AddNoteViewModel {
+        AddNoteViewModel(noteUseCase: makeNoteUseCase(), categoryUseCase: makeCategoryUseCase())
+    }
+
+    func makeEditNoteViewModel(for note: Note) -> EditNoteViewModel {
+        EditNoteViewModel(note: note, noteUseCase: makeNoteUseCase(), categoryUseCase: makeCategoryUseCase())
+    }
+
+    func makeCategoryListViewModel() -> CategoryListViewModel {
+        CategoryListViewModel(useCase: makeCategoryUseCase())
+    }
+
+    func makeAddCategoryViewModel() -> AddCategoryViewModel {
+        AddCategoryViewModel(useCase: makeCategoryUseCase())
+    }
+
+    private func makeNoteUseCase() -> NoteUseCase {
+        DefaultNoteUseCase(repository: SwiftDataNoteRepository(context: modelContext))
+    }
+
+    private func makeCategoryUseCase() -> CategoryUseCase {
+        DefaultCategoryUseCase(repository: SwiftDataCategoryRepository(context: modelContext))
+    }
+}
