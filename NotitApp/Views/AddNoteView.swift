@@ -98,6 +98,7 @@ struct AddNoteView: View {
             .padding(.bottom, 40)
         }
         .navigationBarHidden(true)
+        .hidesTabBarWhilePresented()
         .task {
             await viewModel.loadCategories()
         }
@@ -211,4 +212,5 @@ struct CategoryChip: View {
     NavigationStack {
         AddNoteView(AddNoteViewModel(noteUseCase: MockNoteUseCase(), categoryUseCase: MockCategoryUseCase()))
     }
+    .environmentObject(TabBarVisibility())
 }
