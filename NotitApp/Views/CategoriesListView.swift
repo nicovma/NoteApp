@@ -82,6 +82,7 @@ struct CategoriesListView: View {
                     .foregroundStyle(LiquidGlass.primary)
                     .glassCircle()
             }
+            .accessibilityLabel(Text("Nueva categoría"))
         }
         .padding(.bottom, 24)
     }
@@ -99,6 +100,7 @@ struct CategoryRow: View {
                 .fill(RadialGradient(colors: [color.opacity(0.55), color], center: .init(x: 0.3, y: 0.3), startRadius: 0, endRadius: 24))
                 .frame(width: 42, height: 42)
                 .shadow(color: color.opacity(0.4), radius: 8, x: 0, y: 3)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(category.name)
@@ -113,6 +115,7 @@ struct CategoryRow: View {
         }
         .padding(14)
         .glassSurface(cornerRadius: 22, borderOpacity: 0.7)
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -122,4 +125,5 @@ struct CategoryRow: View {
         CategoryListViewModel(useCase: MockCategoryUseCase()),
         root: CompositionRoot(modelContext: container.mainContext)
     )
+    .environmentObject(TabBarVisibility())
 }

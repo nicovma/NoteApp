@@ -34,10 +34,12 @@ struct AddCategoryView: View {
                     .font(.system(size: 13, weight: .bold))
                     .tracking(0.5)
                     .foregroundStyle(LiquidGlass.inkSecondary)
+                    .accessibilityAddTraits(.isHeader)
                     .padding(.bottom, 10)
 
                 TextField("Nombre", text: $viewModel.name)
                     .font(.system(size: 17, weight: .semibold))
+                    .accessibilityLabel(Text("Nombre"))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 14)
                     .glassSurface(cornerRadius: 18)
@@ -54,12 +56,14 @@ struct AddCategoryView: View {
                     .font(.system(size: 13, weight: .bold))
                     .tracking(0.5)
                     .foregroundStyle(LiquidGlass.inkSecondary)
+                    .accessibilityAddTraits(.isHeader)
                     .padding(.bottom, 14)
 
                 HStack(spacing: 16) {
                     ForEach(CategoryColor.allCases) { color in
                         ColorSwatch(
                             color: color.swiftUIColor,
+                            name: color.accessibilityName,
                             isSelected: viewModel.selectedColor == color
                         ) {
                             viewModel.selectedColor = color
@@ -72,6 +76,7 @@ struct AddCategoryView: View {
                     .font(.system(size: 13, weight: .bold))
                     .tracking(0.5)
                     .foregroundStyle(LiquidGlass.inkSecondary)
+                    .accessibilityAddTraits(.isHeader)
                     .padding(.bottom, 10)
 
                 HStack(spacing: 14) {
@@ -82,6 +87,7 @@ struct AddCategoryView: View {
                         ))
                         .frame(width: 42, height: 42)
                         .shadow(color: viewModel.selectedColor.swiftUIColor.opacity(0.4), radius: 8, x: 0, y: 3)
+                        .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(viewModel.name.isEmpty ? String(localized: "Nombre") : viewModel.name)
@@ -95,6 +101,7 @@ struct AddCategoryView: View {
                 }
                 .padding(14)
                 .glassSurface(cornerRadius: 22, borderOpacity: 0.7)
+                .accessibilityElement(children: .combine)
 
                 Spacer()
             }
@@ -103,6 +110,7 @@ struct AddCategoryView: View {
             .padding(.bottom, 40)
         }
         .navigationBarHidden(true)
+        .hidesTabBarWhilePresented()
         .onChange(of: viewModel.didSave) {
             if viewModel.didSave { dismiss() }
         }
@@ -132,6 +140,7 @@ struct AddCategoryView: View {
 
 private struct ColorSwatch: View {
     let color: Color
+    let name: LocalizedStringKey
     let isSelected: Bool
     let action: () -> Void
 
@@ -156,6 +165,11 @@ private struct ColorSwatch: View {
             }
         }
         .buttonStyle(.plain)
+        // Without this, VoiceOver has nothing to say for a plain color
+        // circle — "isSelected" mirrors the visual checkmark as a trait
+        // instead of relying on sighted-only cues.
+        .accessibilityLabel(name)
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 }
 
@@ -163,4 +177,5 @@ private struct ColorSwatch: View {
     NavigationStack {
         AddCategoryView(AddCategoryViewModel(useCase: MockCategoryUseCase()))
     }
+    .environmentObject(TabBarVisibility())
 }
