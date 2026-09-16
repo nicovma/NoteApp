@@ -28,7 +28,7 @@ struct LiquidGlassTabBar: View {
         .glassSurface(cornerRadius: 32, borderOpacity: 0.75)
     }
 
-    private func tabButton(_ tab: AppTab, icon: String, title: String) -> some View {
+    private func tabButton(_ tab: AppTab, icon: String, title: LocalizedStringKey) -> some View {
         let isSelected = selection == tab
         return Button {
             guard selection != tab else { return }

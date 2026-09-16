@@ -45,7 +45,7 @@ struct NoteDetailView: View {
                         .padding(.vertical, 5)
                         .background(color.opacity(0.14), in: Capsule())
 
-                        Text(note.createdAt.relativeDescriptionEs)
+                        Text(note.createdAt.relativeDescription)
                             .font(.system(size: 13))
                             .foregroundStyle(LiquidGlass.inkSecondary)
                     }
