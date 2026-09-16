@@ -101,6 +101,7 @@ struct NotesListView: View {
                     .foregroundStyle(LiquidGlass.primary)
                     .glassCircle()
             }
+            .accessibilityLabel(Text("Nueva nota"))
         }
         .padding(.bottom, 16)
     }
@@ -186,6 +187,9 @@ private struct NoteCard: View {
         )
         .compositingGroup()
         .shadow(color: .black.opacity(0.07), radius: 16, x: 0, y: 8)
+        // Without this, VoiceOver stops on category, date, title and body
+        // as four separate swipes per card instead of one.
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -195,4 +199,5 @@ private struct NoteCard: View {
         NoteListViewModel(useCase: MockNoteUseCase()),
         root: CompositionRoot(modelContext: container.mainContext)
     )
+    .environmentObject(TabBarVisibility())
 }
