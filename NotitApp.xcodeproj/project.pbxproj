@@ -153,10 +153,11 @@
 				};
 			};
 			buildConfigurationList = 03A748B03040767E00F49C45 /* Build configuration list for PBXProject "NotitApp" */;
-			developmentRegion = en;
+			developmentRegion = es;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				es,
 				Base,
 			);
 			mainGroup = 03A748AC3040767E00F49C45;

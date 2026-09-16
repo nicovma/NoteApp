@@ -47,11 +47,11 @@ final class AddNoteViewModel: ObservableObject {
 
     func createNote() async {
         guard !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            errorMessage = "El título no puede estar vacío"
+            errorMessage = String(localized: "El título no puede estar vacío")
             return
         }
         guard let category = selectedCategory else {
-            errorMessage = "Elegí una categoría"
+            errorMessage = String(localized: "Elegí una categoría")
             return
         }
         let note = Note(title, value: value, category: category, createdAt: .now)

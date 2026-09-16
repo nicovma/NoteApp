@@ -150,7 +150,7 @@ private struct NoteCard: View {
 
                 Spacer()
 
-                Text(note.createdAt.relativeDescriptionEs)
+                Text(note.createdAt.relativeDescription)
                     .font(.system(size: 12))
                     .foregroundStyle(LiquidGlass.inkSecondary)
             }
