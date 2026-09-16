@@ -6,15 +6,18 @@
 //
 import Foundation
 import SwiftUI
+import SwiftData
 
 struct CategoriesListView: View {
-    
+
     @StateObject private var viewModel: CategoryListViewModel
-    
-    init(_ viewModel: CategoryListViewModel) {
+    private let root: CompositionRoot
+
+    init(_ viewModel: CategoryListViewModel, root: CompositionRoot) {
         _viewModel = StateObject(wrappedValue: viewModel)
+        self.root = root
     }
-    
+
     var body: some View {
         NavigationStack {
             Group {
@@ -44,7 +47,7 @@ struct CategoriesListView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
-                        AddCategoryView()
+                        AddCategoryView(root.makeAddCategoryViewModel())
                     } label: {
                         Image(systemName: "plus")
                     }
@@ -56,5 +59,9 @@ struct CategoriesListView: View {
 }
 
 #Preview {
-    CategoriesListView(CategoryListViewModel(useCase: MockCategoryUseCase()))
+    let container = try! ModelContainer(for: Note.self, Category.self, configurations: .init(isStoredInMemoryOnly: true))
+    CategoriesListView(
+        CategoryListViewModel(useCase: MockCategoryUseCase()),
+        root: CompositionRoot(modelContext: container.mainContext)
+    )
 }

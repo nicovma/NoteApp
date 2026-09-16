@@ -5,7 +5,7 @@
 //  Created by Nicolas Valentini on 27/8/2026.
 //
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 enum CategoryColor: String, CaseIterable, Identifiable {
     case red = "RED"
