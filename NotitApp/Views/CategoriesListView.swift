@@ -12,6 +12,7 @@ struct CategoriesListView: View {
 
     @StateObject private var viewModel: CategoryListViewModel
     private let root: CompositionRoot
+    @State private var categoryPendingDeletion: Category?
 
     init(_ viewModel: CategoryListViewModel, root: CompositionRoot) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -45,7 +46,7 @@ struct CategoriesListView: View {
                                     .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
                                     .swipeActions {
                                         Button("Eliminar", role: .destructive) {
-                                            Task { await viewModel.deleteCategory(category) }
+                                            categoryPendingDeletion = category
                                         }
                                     }
                             }
@@ -65,6 +66,26 @@ struct CategoriesListView: View {
             }
             .navigationBarHidden(true)
             .task { await viewModel.fetchCategories() }
+            .confirmationDialog(
+                categoryPendingDeletion.map { String(format: String(localized: "¿Eliminar \"%@\"?"), $0.name) } ?? "",
+                isPresented: Binding(
+                    get: { categoryPendingDeletion != nil },
+                    set: { isPresented in if !isPresented { categoryPendingDeletion = nil } }
+                ),
+                titleVisibility: .visible
+            ) {
+                Button("Eliminar", role: .destructive) {
+                    if let category = categoryPendingDeletion {
+                        Task { await viewModel.deleteCategory(category) }
+                    }
+                    categoryPendingDeletion = nil
+                }
+                Button("Cancelar", role: .cancel) {
+                    categoryPendingDeletion = nil
+                }
+            } message: {
+                Text("Esta acción no se puede deshacer: se van a eliminar también todas las notas de esta categoría.")
+            }
         }
     }
 
