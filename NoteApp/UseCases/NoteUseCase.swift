@@ -1,0 +1,15 @@
+//
+//  NoteUseCase.swift
+//  NoteApp
+//
+//  Created by Nicolas Valentini on 27/8/2026.
+//
+import Foundation
+
+@MainActor
+protocol NoteUseCase {
+    func add(_ category: Note) async throws -> Void
+    func delete(_ note: Note) async throws -> Void
+    func fetch() async throws -> [Note]
+}
+
