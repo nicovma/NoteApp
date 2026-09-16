@@ -21,6 +21,7 @@ final class DefaultNoteUseCase: NoteUseCase {
     }
 
     func update(_ note: Note) async throws {
+        note.updatedAt = .now
         try await self.repository.save(note)
     }
 

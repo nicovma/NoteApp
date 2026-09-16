@@ -14,12 +14,14 @@ final class Note {
     var value: String
     var category: Category
     var createdAt: Date
-    
-    init(_ title: String, value: String, category: Category, createdAt: Date, id: UUID = UUID()) {
+    var updatedAt: Date = Date.now
+
+    init(_ title: String, value: String, category: Category, createdAt: Date, updatedAt: Date? = nil, id: UUID = UUID()) {
         self.id = id
         self.title = title
         self.value = value
         self.category = category
         self.createdAt = createdAt
+        self.updatedAt = updatedAt ?? createdAt
     }
 }
