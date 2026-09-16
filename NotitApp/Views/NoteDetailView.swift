@@ -78,6 +78,7 @@ struct NoteDetailView: View {
             .padding(.bottom, 40)
         }
         .navigationBarHidden(true)
+        .hidesTabBarWhilePresented()
         .sheet(isPresented: $isEditing) {
             NavigationStack {
                 EditNoteView(root.makeEditNoteViewModel(for: note))
@@ -132,4 +133,5 @@ struct NoteDetailView: View {
             onDelete: {}
         )
     }
+    .environmentObject(TabBarVisibility())
 }

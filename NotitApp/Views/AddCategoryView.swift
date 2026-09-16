@@ -103,6 +103,7 @@ struct AddCategoryView: View {
             .padding(.bottom, 40)
         }
         .navigationBarHidden(true)
+        .hidesTabBarWhilePresented()
         .onChange(of: viewModel.didSave) {
             if viewModel.didSave { dismiss() }
         }
@@ -163,4 +164,5 @@ private struct ColorSwatch: View {
     NavigationStack {
         AddCategoryView(AddCategoryViewModel(useCase: MockCategoryUseCase()))
     }
+    .environmentObject(TabBarVisibility())
 }

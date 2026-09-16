@@ -195,4 +195,5 @@ private struct NoteCard: View {
         NoteListViewModel(useCase: MockNoteUseCase()),
         root: CompositionRoot(modelContext: container.mainContext)
     )
+    .environmentObject(TabBarVisibility())
 }
