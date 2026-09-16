@@ -33,6 +33,7 @@ struct AddNoteView: View {
 
                 TextField("Título", text: $viewModel.title)
                     .font(.system(size: 19, weight: .bold))
+                    .accessibilityLabel(Text("Título"))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 14)
                     .glassSurface(cornerRadius: 18)
@@ -49,6 +50,7 @@ struct AddNoteView: View {
                     .font(.system(size: 13, weight: .bold))
                     .tracking(0.5)
                     .foregroundStyle(LiquidGlass.inkSecondary)
+                    .accessibilityAddTraits(.isHeader)
                     .padding(.bottom, 10)
 
                 if viewModel.categories.isEmpty {
@@ -75,10 +77,17 @@ struct AddNoteView: View {
                             .foregroundStyle(LiquidGlass.inkTertiary)
                             .padding(.top, 8)
                             .padding(.leading, 5)
+                            .accessibilityHidden(true)
                     }
                     TextEditor(text: $viewModel.value)
                         .font(.system(size: 16))
                         .scrollContentBackground(.hidden)
+                        // The placeholder above is a plain overlay Text, not a
+                        // real TextEditor placeholder — VoiceOver never reads
+                        // it on its own, so an empty editor would otherwise
+                        // announce as "Text Editor, blank" with no hint.
+                        .accessibilityLabel(Text("Nota"))
+                        .accessibilityHint(viewModel.value.isEmpty ? Text("Escribí tu nota...") : Text(""))
                 }
                 .padding(16)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -143,6 +152,7 @@ struct NoCategoriesPrompt: View {
             HStack(spacing: 10) {
                 Image(systemName: "plus.circle.fill")
                     .font(.system(size: 16))
+                    .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Todavía no tenés categorías")
                         .font(.system(size: 14, weight: .semibold))
@@ -158,6 +168,7 @@ struct NoCategoriesPrompt: View {
             .glassSurface(cornerRadius: 16)
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -189,6 +200,11 @@ struct CategoryChip: View {
             )
         }
         .buttonStyle(.plain)
+        // The dot/checkmark is purely decorative (redundant with the
+        // selection trait below) — combine collapses it into the chip's
+        // single VoiceOver stop instead of announcing an unlabeled shape.
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 }
 
