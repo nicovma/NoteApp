@@ -9,12 +9,21 @@ import SwiftUI
 
 struct AddNoteView: View {
 
-    @ObservedObject private var viewModel: AddNoteViewModel
+    // @StateObject, not @ObservedObject: this view model is built inline by
+    // the caller (`AddNoteView(root.makeAddNoteViewModel())`) and pushed via
+    // a plain NavigationLink destination closure. With @ObservedObject, any
+    // re-render of the pushed-from parent re-evaluates that closure and
+    // SwiftUI treats it as a brand-new object — silently swapping in a fresh,
+    // empty AddNoteViewModel while this screen is still on screen (typed
+    // title/body reset, reloaded categories lost). @StateObject keeps the
+    // first instance for the life of this view regardless of how many times
+    // the parent's body re-evaluates.
+    @StateObject private var viewModel: AddNoteViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var isAddingCategory = false
 
     init(_ viewModel: AddNoteViewModel) {
-        self.viewModel = viewModel
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     private static let backdrop: [GlassBackdrop.Blob] = [

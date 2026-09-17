@@ -1,6 +1,7 @@
 {
   "sourceLanguage": "es",
   "strings": {
+    "": {},
     "%lld notas": {
       "localizations": {
         "en": {
@@ -287,6 +288,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "New note"
+          }
+        }
+      }
+    },
+    "Recién": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Just now"
           }
         }
       }

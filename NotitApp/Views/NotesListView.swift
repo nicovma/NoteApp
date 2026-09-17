@@ -14,6 +14,7 @@ struct NotesListView: View {
     private let root: CompositionRoot
     @State private var searchText = ""
     @State private var path: [Note] = []
+    @State private var isAddingNote = false
     @FocusState private var isSearchFocused: Bool
 
     init(_ vm: NoteListViewModel, root: CompositionRoot) {
@@ -89,6 +90,11 @@ struct NotesListView: View {
                 await viewModel.fetchNotes()
             }
         }
+        .sheet(isPresented: $isAddingNote) {
+            NavigationStack {
+                AddNoteView(root.makeAddNoteViewModel())
+            }
+        }
     }
 
     private var header: some View {
@@ -97,8 +103,8 @@ struct NotesListView: View {
                 .font(.system(size: 34, weight: .heavy))
                 .foregroundStyle(LiquidGlass.ink)
             Spacer()
-            NavigationLink {
-                AddNoteView(root.makeAddNoteViewModel())
+            Button {
+                isAddingNote = true
             } label: {
                 Image(systemName: "plus")
                     .font(.system(size: 16, weight: .bold))

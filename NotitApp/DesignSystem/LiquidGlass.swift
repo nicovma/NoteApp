@@ -157,8 +157,14 @@ struct GradientPillButtonStyle: ButtonStyle {
 
 extension Date {
     /// "Hace 2 horas" / "2 hours ago", "Ayer" / "Yesterday", etc. — follows
-    /// the app's current language instead of a fixed one.
+    /// the app's current language instead of a fixed one. Dates within a few
+    /// seconds of now are handled explicitly — right at that boundary,
+    /// RelativeDateTimeFormatter can round to the future side ("in 0 seconds")
+    /// instead of past.
     var relativeDescription: String {
+        guard abs(timeIntervalSinceNow) >= 5 else {
+            return String(localized: "Recién")
+        }
         let formatter = RelativeDateTimeFormatter()
         formatter.locale = .autoupdatingCurrent
         formatter.unitsStyle = .full
