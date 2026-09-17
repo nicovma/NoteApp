@@ -14,3 +14,11 @@ final class ThrowingCategoryUseCase: CategoryUseCase {
     func delete(_ category: NotitApp.Category) async throws { throw StubError() }
     func fetch() async throws -> [NotitApp.Category] { throw StubError() }
 }
+
+final class ThrowingNoteSuggestionUseCase: NoteSuggestionUseCase {
+    var isAvailable: Bool { true }
+    var unavailableReason: String? { nil }
+    func suggest(for text: String, existingCategories: [NotitApp.Category], previousSuggestion: NoteSuggestion?) async throws -> NoteSuggestion {
+        throw StubError()
+    }
+}
