@@ -28,7 +28,7 @@ struct LiquidGlassTabBar: View {
         .glassSurface(cornerRadius: 32, borderOpacity: 0.75)
     }
 
-    private func tabButton(_ tab: AppTab, icon: String, title: String) -> some View {
+    private func tabButton(_ tab: AppTab, icon: String, title: LocalizedStringKey) -> some View {
         let isSelected = selection == tab
         return Button {
             guard selection != tab else { return }
@@ -50,5 +50,11 @@ struct LiquidGlassTabBar: View {
             .background(isSelected ? LiquidGlass.primary.opacity(0.14) : Color.clear, in: Capsule())
         }
         .buttonStyle(.plain)
+        // A custom tab bar doesn't inherit TabView's built-in "tab, selected"
+        // semantics — combine collapses icon+label into one stop and the
+        // trait restores the selected-state announcement a real TabView
+        // would give for free.
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 }

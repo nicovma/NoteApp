@@ -7,12 +7,14 @@ import SwiftUI
 
 struct EditNoteView: View {
 
-    @ObservedObject private var viewModel: EditNoteViewModel
+    // @StateObject — see AddNoteView for why @ObservedObject on an
+    // inline-constructed view model is unsafe here.
+    @StateObject private var viewModel: EditNoteViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var isAddingCategory = false
 
     init(_ viewModel: EditNoteViewModel) {
-        self.viewModel = viewModel
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     private static let backdrop: [GlassBackdrop.Blob] = [
@@ -31,6 +33,7 @@ struct EditNoteView: View {
 
                 TextField("Título", text: $viewModel.title)
                     .font(.system(size: 19, weight: .bold))
+                    .accessibilityLabel(Text("Título"))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 14)
                     .glassSurface(cornerRadius: 18)
@@ -47,6 +50,7 @@ struct EditNoteView: View {
                     .font(.system(size: 13, weight: .bold))
                     .tracking(0.5)
                     .foregroundStyle(LiquidGlass.inkSecondary)
+                    .accessibilityAddTraits(.isHeader)
                     .padding(.bottom, 10)
 
                 if viewModel.categories.isEmpty {
@@ -73,10 +77,13 @@ struct EditNoteView: View {
                             .foregroundStyle(LiquidGlass.inkTertiary)
                             .padding(.top, 8)
                             .padding(.leading, 5)
+                            .accessibilityHidden(true)
                     }
                     TextEditor(text: $viewModel.value)
                         .font(.system(size: 16))
                         .scrollContentBackground(.hidden)
+                        .accessibilityLabel(Text("Nota"))
+                        .accessibilityHint(viewModel.value.isEmpty ? Text("Escribí tu nota...") : Text(""))
                 }
                 .padding(16)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

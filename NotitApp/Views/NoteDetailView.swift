@@ -37,6 +37,7 @@ struct NoteDetailView: View {
                     HStack(spacing: 10) {
                         HStack(spacing: 6) {
                             Circle().fill(color).frame(width: 6, height: 6)
+                                .accessibilityHidden(true)
                             Text(note.category.name)
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundStyle(color)
@@ -45,11 +46,12 @@ struct NoteDetailView: View {
                         .padding(.vertical, 5)
                         .background(color.opacity(0.14), in: Capsule())
 
-                        Text(note.createdAt.relativeDescriptionEs)
+                        Text(note.createdAt.relativeDescription)
                             .font(.system(size: 13))
                             .foregroundStyle(LiquidGlass.inkSecondary)
                     }
                     .padding(.bottom, 16)
+                    .accessibilityElement(children: .combine)
 
                     Text(note.title)
                         .font(.system(size: 26, weight: .heavy))
@@ -78,6 +80,7 @@ struct NoteDetailView: View {
             .padding(.bottom, 40)
         }
         .navigationBarHidden(true)
+        .hidesTabBarWhilePresented()
         .sheet(isPresented: $isEditing) {
             NavigationStack {
                 EditNoteView(root.makeEditNoteViewModel(for: note))
@@ -95,6 +98,7 @@ struct NoteDetailView: View {
                     .foregroundStyle(LiquidGlass.ink)
                     .glassCircle()
             }
+            .accessibilityLabel(Text("Volver"))
 
             Spacer()
 
@@ -107,6 +111,7 @@ struct NoteDetailView: View {
                         .foregroundStyle(LiquidGlass.systemBlue)
                         .glassCircle()
                 }
+                .accessibilityLabel(Text("Editar"))
 
                 Button {
                     onDelete()
@@ -118,6 +123,7 @@ struct NoteDetailView: View {
                         .frame(width: 40, height: 40)
                         .background(LiquidGlass.systemRed.opacity(0.14), in: Circle())
                 }
+                .accessibilityLabel(Text("Eliminar"))
             }
         }
     }
@@ -132,4 +138,5 @@ struct NoteDetailView: View {
             onDelete: {}
         )
     }
+    .environmentObject(TabBarVisibility())
 }

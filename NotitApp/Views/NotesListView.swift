@@ -14,6 +14,8 @@ struct NotesListView: View {
     private let root: CompositionRoot
     @State private var searchText = ""
     @State private var path: [Note] = []
+    @State private var isAddingNote = false
+    @FocusState private var isSearchFocused: Bool
 
     init(_ vm: NoteListViewModel, root: CompositionRoot) {
         _viewModel = StateObject(wrappedValue: vm)
@@ -45,6 +47,8 @@ struct NotesListView: View {
                         searchField
                         if filtered.isEmpty {
                             emptyState
+                                .contentShape(Rectangle())
+                                .onTapGesture { isSearchFocused = false }
                         } else {
                             List {
                                 ForEach(filtered) { note in
@@ -66,6 +70,7 @@ struct NotesListView: View {
                             }
                             .listStyle(.plain)
                             .scrollContentBackground(.hidden)
+                            .scrollDismissesKeyboard(.immediately)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -85,6 +90,11 @@ struct NotesListView: View {
                 await viewModel.fetchNotes()
             }
         }
+        .sheet(isPresented: $isAddingNote) {
+            NavigationStack {
+                AddNoteView(root.makeAddNoteViewModel())
+            }
+        }
     }
 
     private var header: some View {
@@ -93,14 +103,15 @@ struct NotesListView: View {
                 .font(.system(size: 34, weight: .heavy))
                 .foregroundStyle(LiquidGlass.ink)
             Spacer()
-            NavigationLink {
-                AddNoteView(root.makeAddNoteViewModel())
+            Button {
+                isAddingNote = true
             } label: {
                 Image(systemName: "plus")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(LiquidGlass.primary)
                     .glassCircle()
             }
+            .accessibilityLabel(Text("Nueva nota"))
         }
         .padding(.bottom, 16)
     }
@@ -111,6 +122,7 @@ struct NotesListView: View {
                 .foregroundStyle(LiquidGlass.inkSecondary)
             TextField("Buscar", text: $searchText)
                 .foregroundStyle(LiquidGlass.ink)
+                .focused($isSearchFocused)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
@@ -150,7 +162,7 @@ private struct NoteCard: View {
 
                 Spacer()
 
-                Text(note.createdAt.relativeDescriptionEs)
+                Text(note.updatedAt.relativeDescription)
                     .font(.system(size: 12))
                     .foregroundStyle(LiquidGlass.inkSecondary)
             }
@@ -186,6 +198,9 @@ private struct NoteCard: View {
         )
         .compositingGroup()
         .shadow(color: .black.opacity(0.07), radius: 16, x: 0, y: 8)
+        // Without this, VoiceOver stops on category, date, title and body
+        // as four separate swipes per card instead of one.
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -195,4 +210,5 @@ private struct NoteCard: View {
         NoteListViewModel(useCase: MockNoteUseCase()),
         root: CompositionRoot(modelContext: container.mainContext)
     )
+    .environmentObject(TabBarVisibility())
 }
