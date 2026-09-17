@@ -34,4 +34,8 @@ final class DefaultNoteUseCase: NoteUseCase {
         return notes
     }
 
+    func fetch(byCategory category: Category) async throws -> [Note] {
+        try await repository.fetch(byCategory: category)
+    }
+
 }

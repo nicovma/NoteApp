@@ -7,11 +7,16 @@ import SwiftUI
 
 struct EditNoteView: View {
 
+    private enum Field {
+        case title, body
+    }
+
     // @StateObject — see AddNoteView for why @ObservedObject on an
     // inline-constructed view model is unsafe here.
     @StateObject private var viewModel: EditNoteViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var isAddingCategory = false
+    @FocusState private var focusedField: Field?
 
     init(_ viewModel: EditNoteViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -38,6 +43,7 @@ struct EditNoteView: View {
                     .padding(.vertical, 14)
                     .glassSurface(cornerRadius: 18)
                     .padding(.bottom, 16)
+                    .focused($focusedField, equals: .title)
 
                 if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage)
@@ -84,6 +90,7 @@ struct EditNoteView: View {
                         .scrollContentBackground(.hidden)
                         .accessibilityLabel(Text("Nota"))
                         .accessibilityHint(viewModel.value.isEmpty ? Text("Escribí tu nota...") : Text(""))
+                        .focused($focusedField, equals: .body)
                 }
                 .padding(16)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -94,6 +101,9 @@ struct EditNoteView: View {
             .padding(.bottom, 40)
         }
         .navigationBarHidden(true)
+        .hidesTabBarWhilePresented()
+        .contentShape(Rectangle())
+        .onTapGesture { focusedField = nil }
         .task {
             await viewModel.loadCategories()
         }
@@ -114,7 +124,10 @@ struct EditNoteView: View {
 
     private var topBar: some View {
         HStack {
-            Button("Cancelar") { dismiss() }
+            Button("Cancelar") {
+                focusedField = nil
+                dismiss()
+            }
                 .font(.system(size: 16))
                 .foregroundStyle(LiquidGlass.primary)
 
@@ -127,6 +140,7 @@ struct EditNoteView: View {
             Spacer()
 
             Button("Guardar") {
+                focusedField = nil
                 Task { await viewModel.saveChanges() }
             }
             .buttonStyle(GradientPillButtonStyle(tint: LiquidGlass.primary))

@@ -1,20 +1,18 @@
 //
-//  AddCategoryView.swift
+//  EditCategoryView.swift
 //  NotitApp
-//
-//  Created by Nicolas Valentini on 27/8/2026.
 //
 import Foundation
 import SwiftUI
 
-struct AddCategoryView: View {
+struct EditCategoryView: View {
 
     // @StateObject — see AddNoteView for why @ObservedObject on an
     // inline-constructed view model is unsafe here.
-    @StateObject private var viewModel: AddCategoryViewModel
+    @StateObject private var viewModel: EditCategoryViewModel
     @Environment(\.dismiss) private var dismiss
 
-    init(_ viewModel: AddCategoryViewModel) {
+    init(_ viewModel: EditCategoryViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
@@ -95,7 +93,7 @@ struct AddCategoryView: View {
                         Text(viewModel.name.isEmpty ? String(localized: "Nombre") : viewModel.name)
                             .font(.system(size: 16, weight: .bold))
                             .foregroundStyle(LiquidGlass.ink)
-                        Text("0 notas")
+                        Text("\(viewModel.category.notes.count) notas")
                             .font(.system(size: 13))
                             .foregroundStyle(LiquidGlass.inkSecondary)
                     }
@@ -126,58 +124,23 @@ struct AddCategoryView: View {
 
             Spacer()
 
-            Text("Nueva categoría")
+            Text("Editar categoría")
                 .font(.system(size: 16, weight: .bold))
                 .foregroundStyle(LiquidGlass.ink)
 
             Spacer()
 
             Button("Guardar") {
-                Task { await viewModel.createCategory() }
+                Task { await viewModel.saveChanges() }
             }
             .buttonStyle(GradientPillButtonStyle(tint: LiquidGlass.primary))
         }
     }
 }
 
-struct ColorSwatch: View {
-    let color: Color
-    let name: LocalizedStringKey
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            ZStack {
-                Circle()
-                    .fill(RadialGradient(
-                        colors: [color.opacity(0.55), color],
-                        center: .init(x: 0.3, y: 0.3), startRadius: 0, endRadius: 25
-                    ))
-                    .frame(width: isSelected ? 50 : 44, height: isSelected ? 50 : 44)
-                    .shadow(color: color.opacity(0.45), radius: isSelected ? 10 : 6, x: 0, y: 3)
-                    .overlay(
-                        Circle().strokeBorder(.white, lineWidth: isSelected ? 3 : 0)
-                    )
-                if isSelected {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundStyle(.white)
-                }
-            }
-        }
-        .buttonStyle(.plain)
-        // Without this, VoiceOver has nothing to say for a plain color
-        // circle — "isSelected" mirrors the visual checkmark as a trait
-        // instead of relying on sighted-only cues.
-        .accessibilityLabel(name)
-        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
-    }
-}
-
 #Preview {
     NavigationStack {
-        AddCategoryView(AddCategoryViewModel(useCase: MockCategoryUseCase()))
+        EditCategoryView(EditCategoryViewModel(category: Category("Trabajo", color: "BLUE"), useCase: MockCategoryUseCase()))
     }
     .environmentObject(TabBarVisibility())
 }

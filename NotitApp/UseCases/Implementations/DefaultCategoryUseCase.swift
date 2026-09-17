@@ -18,7 +18,11 @@ final class DefaultCategoryUseCase: CategoryUseCase {
     func add(_ category: Category) async throws {
         try await repository.save(category)
     }
-    
+
+    func update(_ category: Category) async throws {
+        try await repository.save(category)
+    }
+
     func delete(_ category: Category) async throws {
         try await repository.delete(category)
     }

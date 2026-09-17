@@ -12,7 +12,9 @@ struct CategoriesListView: View {
 
     @StateObject private var viewModel: CategoryListViewModel
     private let root: CompositionRoot
+    @State private var path = NavigationPath()
     @State private var categoryPendingDeletion: Category?
+    @State private var categoryPendingEdit: Category?
     @State private var isAddingCategory = false
 
     init(_ viewModel: CategoryListViewModel, root: CompositionRoot) {
@@ -28,7 +30,7 @@ struct CategoriesListView: View {
     ]
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ZStack {
                 GlassBackdrop(blobs: Self.backdrop)
 
@@ -42,6 +44,8 @@ struct CategoriesListView: View {
                         List {
                             ForEach(categories) { category in
                                 CategoryRow(category: category)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture { path.append(category) }
                                     .listRowBackground(Color.clear)
                                     .listRowSeparator(.hidden)
                                     .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
@@ -56,6 +60,11 @@ struct CategoriesListView: View {
                                             categoryPendingDeletion = category
                                         }
                                         .tint(LiquidGlass.systemRed)
+
+                                        Button("Editar") {
+                                            categoryPendingEdit = category
+                                        }
+                                        .tint(LiquidGlass.systemBlue)
                                     }
                             }
                             Color.clear.frame(height: 90)
@@ -67,6 +76,13 @@ struct CategoriesListView: View {
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 60)
+                    .navigationDestination(for: Category.self) { category in
+                        CategoryNotesListView(
+                            root.makeCategoryNotesViewModel(for: category),
+                            path: $path,
+                            root: root
+                        )
+                    }
 
                 case .error(let message):
                     Text(message)
@@ -109,6 +125,16 @@ struct CategoriesListView: View {
                 // volver de "Nueva categoría" — sin este refetch explícito, la
                 // categoría se guarda pero la lista se queda con el estado viejo.
                 if !isAddingCategory {
+                    Task { await viewModel.fetchCategories() }
+                }
+            }
+            .sheet(item: $categoryPendingEdit) { category in
+                NavigationStack {
+                    EditCategoryView(root.makeEditCategoryViewModel(for: category))
+                }
+            }
+            .onChange(of: categoryPendingEdit) {
+                if categoryPendingEdit == nil {
                     Task { await viewModel.fetchCategories() }
                 }
             }

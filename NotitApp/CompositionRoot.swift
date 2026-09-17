@@ -36,6 +36,14 @@ final class CompositionRoot {
         AddCategoryViewModel(useCase: makeCategoryUseCase())
     }
 
+    func makeEditCategoryViewModel(for category: Category) -> EditCategoryViewModel {
+        EditCategoryViewModel(category: category, useCase: makeCategoryUseCase())
+    }
+
+    func makeCategoryNotesViewModel(for category: Category) -> CategoryNotesViewModel {
+        CategoryNotesViewModel(category: category, useCase: makeNoteUseCase())
+    }
+
     private func makeNoteUseCase() -> NoteUseCase {
         DefaultNoteUseCase(repository: SwiftDataNoteRepository(context: modelContext))
     }

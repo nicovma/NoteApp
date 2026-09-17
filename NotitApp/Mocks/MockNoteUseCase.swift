@@ -40,5 +40,9 @@ final class MockNoteUseCase: NoteUseCase {
     func fetch() async throws -> [Note] {
         return  notes
     }
+
+    func fetch(byCategory category: Category) async throws -> [Note] {
+        notes.filter { $0.category.id == category.id }
+    }
 }
 #endif
