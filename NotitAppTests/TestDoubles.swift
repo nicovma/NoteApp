@@ -18,7 +18,7 @@ final class ThrowingCategoryUseCase: CategoryUseCase {
 final class ThrowingNoteSuggestionUseCase: NoteSuggestionUseCase {
     var isAvailable: Bool { true }
     var unavailableReason: String? { nil }
-    func suggest(for text: String, existingCategories: [NotitApp.Category]) async throws -> NoteSuggestion {
+    func suggest(for text: String, existingCategories: [NotitApp.Category], previousSuggestion: NoteSuggestion?) async throws -> NoteSuggestion {
         throw StubError()
     }
 }
