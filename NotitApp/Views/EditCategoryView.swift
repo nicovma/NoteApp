@@ -110,7 +110,6 @@ struct EditCategoryView: View {
             .padding(.bottom, 40)
         }
         .navigationBarHidden(true)
-        .hidesTabBarWhilePresented()
         .onChange(of: viewModel.didSave) {
             if viewModel.didSave { dismiss() }
         }
@@ -134,6 +133,8 @@ struct EditCategoryView: View {
                 Task { await viewModel.saveChanges() }
             }
             .buttonStyle(GradientPillButtonStyle(tint: LiquidGlass.primary))
+            .disabled(!viewModel.canSave)
+            .opacity(viewModel.canSave ? 1 : 0.4)
         }
     }
 }

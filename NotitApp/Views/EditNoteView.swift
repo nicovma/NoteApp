@@ -101,7 +101,6 @@ struct EditNoteView: View {
             .padding(.bottom, 40)
         }
         .navigationBarHidden(true)
-        .hidesTabBarWhilePresented()
         .contentShape(Rectangle())
         .onTapGesture { focusedField = nil }
         .task {

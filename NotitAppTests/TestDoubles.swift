@@ -3,7 +3,7 @@
 struct StubError: Error {}
 
 final class ThrowingNoteUseCase: NoteUseCase {
-    func add(_ category: Note) async throws { throw StubError() }
+    func add(_ note: Note) async throws { throw StubError() }
     func update(_ note: Note) async throws { throw StubError() }
     func delete(_ note: Note) async throws { throw StubError() }
     func fetch() async throws -> [Note] { throw StubError() }

@@ -175,6 +175,16 @@
         }
       }
     },
+    "Editar categoría" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit category"
+          }
+        }
+      }
+    },
     "Editar nota" : {
       "localizations" : {
         "en" : {
@@ -251,6 +261,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This can't be undone: all notes in this category will be deleted too."
+          }
+        }
+      }
+    },
+    "Esta acción no se puede deshacer." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This action can't be undone."
           }
         }
       }
@@ -421,6 +441,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Title"
+          }
+        }
+      }
+    },
+    "Todavía no hay notas en esta categoría" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No notes in this category yet"
           }
         }
       }

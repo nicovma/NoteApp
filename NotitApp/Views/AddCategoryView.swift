@@ -112,7 +112,6 @@ struct AddCategoryView: View {
             .padding(.bottom, 40)
         }
         .navigationBarHidden(true)
-        .hidesTabBarWhilePresented()
         .onChange(of: viewModel.didSave) {
             if viewModel.didSave { dismiss() }
         }
@@ -136,6 +135,8 @@ struct AddCategoryView: View {
                 Task { await viewModel.createCategory() }
             }
             .buttonStyle(GradientPillButtonStyle(tint: LiquidGlass.primary))
+            .disabled(!viewModel.canSave)
+            .opacity(viewModel.canSave ? 1 : 0.4)
         }
     }
 }

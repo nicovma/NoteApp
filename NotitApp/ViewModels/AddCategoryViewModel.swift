@@ -20,6 +20,11 @@ final class AddCategoryViewModel: ObservableObject {
         self.useCase = useCase
     }
 
+    /// Same rule as notes: no name, no save.
+    var canSave: Bool {
+        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     func createCategory() async {
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             errorMessage = String(localized: "El nombre no puede estar vacío")
