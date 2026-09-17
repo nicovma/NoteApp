@@ -12,5 +12,6 @@ protocol NoteUseCase {
     func update(_ note: Note) async throws -> Void
     func delete(_ note: Note) async throws -> Void
     func fetch() async throws -> [Note]
+    func fetch(byCategory category: Category) async throws -> [Note]
 }
 

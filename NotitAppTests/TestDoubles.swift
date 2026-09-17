@@ -7,10 +7,12 @@ final class ThrowingNoteUseCase: NoteUseCase {
     func update(_ note: Note) async throws { throw StubError() }
     func delete(_ note: Note) async throws { throw StubError() }
     func fetch() async throws -> [Note] { throw StubError() }
+    func fetch(byCategory category: NotitApp.Category) async throws -> [Note] { throw StubError() }
 }
 
 final class ThrowingCategoryUseCase: CategoryUseCase {
     func add(_ category: NotitApp.Category) async throws { throw StubError() }
+    func update(_ category: NotitApp.Category) async throws { throw StubError() }
     func delete(_ category: NotitApp.Category) async throws { throw StubError() }
     func fetch() async throws -> [NotitApp.Category] { throw StubError() }
 }

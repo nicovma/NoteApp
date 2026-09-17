@@ -16,6 +16,7 @@ struct NoteDetailView: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var isEditing = false
+    @State private var isConfirmingDelete = false
 
     private static let backdrop: [GlassBackdrop.Blob] = [
         .init(color: LiquidGlass.systemBlue, size: 230, blur: 75, opacity: 0.30, corner: .topLeading, inset: CGPoint(x: 65, y: 45)),
@@ -86,6 +87,20 @@ struct NoteDetailView: View {
                 EditNoteView(root.makeEditNoteViewModel(for: note))
             }
         }
+        // .alert, no .confirmationDialog: mismo bug de iOS 26 documentado en
+        // CategoriesListView (confirmationDialog puede perder el botón Cancelar).
+        .alert(
+            String(format: String(localized: "¿Eliminar \"%@\"?"), note.title),
+            isPresented: $isConfirmingDelete
+        ) {
+            Button("Eliminar", role: .destructive) {
+                onDelete()
+                dismiss()
+            }
+            Button("Cancelar", role: .cancel) {}
+        } message: {
+            Text("Esta acción no se puede deshacer.")
+        }
     }
 
     private var topBar: some View {
@@ -114,8 +129,7 @@ struct NoteDetailView: View {
                 .accessibilityLabel(Text("Editar"))
 
                 Button {
-                    onDelete()
-                    dismiss()
+                    isConfirmingDelete = true
                 } label: {
                     Image(systemName: "trash")
                         .font(.system(size: 15, weight: .semibold))

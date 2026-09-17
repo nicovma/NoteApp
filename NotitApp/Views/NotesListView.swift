@@ -15,6 +15,7 @@ struct NotesListView: View {
     @State private var searchText = ""
     @State private var path: [Note] = []
     @State private var isAddingNote = false
+    @State private var notePendingDeletion: Note?
     @FocusState private var isSearchFocused: Bool
 
     init(_ vm: NoteListViewModel, root: CompositionRoot) {
@@ -59,9 +60,13 @@ struct NotesListView: View {
                                         .listRowSeparator(.hidden)
                                         .listRowInsets(EdgeInsets(top: 7, leading: 0, bottom: 7, trailing: 0))
                                         .swipeActions {
-                                            Button("Eliminar", role: .destructive) {
-                                                Task { await viewModel.delete(note) }
+                                            // Sin `role: .destructive`, ver CategoriesListView: con ese
+                                            // role iOS anima la fila como ya borrada antes de mostrar la
+                                            // confirmación.
+                                            Button("Eliminar") {
+                                                notePendingDeletion = note
                                             }
+                                            .tint(LiquidGlass.systemRed)
                                         }
                                 }
                                 Color.clear.frame(height: 90)
@@ -93,6 +98,36 @@ struct NotesListView: View {
         .sheet(isPresented: $isAddingNote) {
             NavigationStack {
                 AddNoteView(root.makeAddNoteViewModel())
+            }
+        }
+        // .alert, no .confirmationDialog: mismo bug de iOS 26 documentado en
+        // CategoriesListView (confirmationDialog puede perder el botón Cancelar).
+        .alert(
+            notePendingDeletion.map { String(format: String(localized: "¿Eliminar \"%@\"?"), $0.title) } ?? "",
+            isPresented: Binding(
+                get: { notePendingDeletion != nil },
+                set: { isPresented in if !isPresented { notePendingDeletion = nil } }
+            )
+        ) {
+            Button("Eliminar", role: .destructive) {
+                if let note = notePendingDeletion {
+                    Task { await viewModel.delete(note) }
+                }
+                notePendingDeletion = nil
+            }
+            Button("Cancelar", role: .cancel) {
+                notePendingDeletion = nil
+            }
+        } message: {
+            Text("Esta acción no se puede deshacer.")
+        }
+        .onChange(of: isAddingNote) {
+            // NotesListView vive todo el ciclo de vida de la app dentro del
+            // TabView, así que su .task inicial no vuelve a correr al volver
+            // de "Nueva nota" — sin este refetch explícito, la nota se guarda
+            // pero el listado se queda con el estado viejo.
+            if !isAddingNote {
+                Task { await viewModel.fetchNotes() }
             }
         }
     }
@@ -142,7 +177,7 @@ struct NotesListView: View {
 
 }
 
-private struct NoteCard: View {
+struct NoteCard: View {
     let note: Note
 
     var body: some View {
