@@ -12,7 +12,8 @@ A note-taking app with color-coded categories, built with SwiftUI, SwiftData, an
 ## Features
 
 - Create, edit, list, and delete notes — each one tagged to a required category, with the category's color shown as a bar on the card.
-- Create, list, and delete categories, each with a name and a color picked from a fixed palette.
+- Create, edit, and delete categories, each with a name and a color picked from a fixed palette, and drill into a category to see just its notes.
+- AI-assisted note suggestions on-device: as you type, Apple Intelligence (FoundationModels) suggests a title and category, shown as editable chips you tap to accept — nothing is applied automatically.
 - Custom "Liquid Glass" design system: translucent glass surfaces over a soft blurred backdrop, a real floating tab bar (switching tabs never re-fetches), correct behavior under both Dark Mode and the "Reduce Transparency" accessibility setting.
 - Localized in Spanish and English (String Catalog), including a real plural rule for the note count on each category.
 - Fully local and offline: no login, no network calls, no setup required beyond opening the project.
@@ -37,13 +38,15 @@ View ── ViewModel ── UseCase ── Repository ── SwiftData (ModelCo
 
 ## Setup
 
-No API keys, secrets, or third-party services — the app is entirely local. Open `NotitApp.xcodeproj` and run. Requires Xcode 16+, iOS 18.5+.
+No API keys, secrets, or third-party services — the app is entirely local. Open `NotitApp.xcodeproj` and run. Requires Xcode 26+, iOS 26.0+.
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the design decisions behind the layers, the AI suggestion flow, and the SwiftData testing setup.
 
 ## Testing
 
 ```
 xcodebuild test -project NotitApp.xcodeproj -scheme NotitApp \
-  -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'
+  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
 ```
 
 Unit tests cover all four ViewModels (success and error paths) against mock UseCases. A separate integration suite exercises both SwiftData repositories against a real, in-memory `ModelContainer` — created fresh per test and kept alive for the test's duration, since a `ModelContext` doesn't retain its own `ModelContainer`.

@@ -5,9 +5,12 @@
 //  Created by Nicolas Valentini on 27/8/2026.
 //
 import Foundation
+import OSLog
 
 @MainActor
 final class AddNoteViewModel: ObservableObject {
+
+    private let logger = Logger(subsystem: "nicovma.NotitApp", category: "AISuggestion")
 
     @Published private(set) var categories: [Category] = []
     @Published var title: String = ""
@@ -85,6 +88,7 @@ final class AddNoteViewModel: ObservableObject {
         } catch {
             // The suggestion is a bonus, not a requirement — the manual
             // flow keeps working untouched if the model fails.
+            logger.debug("Suggestion request failed: \(error.localizedDescription)")
         }
     }
 

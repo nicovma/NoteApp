@@ -16,10 +16,14 @@ final class DefaultCategoryUseCase: CategoryUseCase {
     }
     
     func add(_ category: Category) async throws {
-        try await repository.save(category)
+        try await save(category)
     }
 
     func update(_ category: Category) async throws {
+        try await save(category)
+    }
+
+    private func save(_ category: Category) async throws {
         try await repository.save(category)
     }
 

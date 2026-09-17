@@ -8,7 +8,7 @@ import Foundation
 
 @MainActor
 protocol NoteUseCase {
-    func add(_ category: Note) async throws -> Void
+    func add(_ note: Note) async throws -> Void
     func update(_ note: Note) async throws -> Void
     func delete(_ note: Note) async throws -> Void
     func fetch() async throws -> [Note]
