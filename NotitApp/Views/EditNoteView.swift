@@ -7,12 +7,14 @@ import SwiftUI
 
 struct EditNoteView: View {
 
-    @ObservedObject private var viewModel: EditNoteViewModel
+    // @StateObject — see AddNoteView for why @ObservedObject on an
+    // inline-constructed view model is unsafe here.
+    @StateObject private var viewModel: EditNoteViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var isAddingCategory = false
 
     init(_ viewModel: EditNoteViewModel) {
-        self.viewModel = viewModel
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     private static let backdrop: [GlassBackdrop.Blob] = [

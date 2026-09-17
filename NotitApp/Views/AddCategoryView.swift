@@ -9,11 +9,13 @@ import SwiftUI
 
 struct AddCategoryView: View {
 
-    @ObservedObject private var viewModel: AddCategoryViewModel
+    // @StateObject — see AddNoteView for why @ObservedObject on an
+    // inline-constructed view model is unsafe here.
+    @StateObject private var viewModel: AddCategoryViewModel
     @Environment(\.dismiss) private var dismiss
 
     init(_ viewModel: AddCategoryViewModel) {
-        self.viewModel = viewModel
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     private static let backdrop: [GlassBackdrop.Blob] = [

@@ -103,7 +103,7 @@
 				03A748B13040767E00F49C45 /* Sources */,
 				03A748B23040767E00F49C45 /* Frameworks */,
 				03A748B33040767E00F49C45 /* Resources */,
-				A1E049746C0B3060B5CF4A6E /* Set build number from git */,
+				A1E049746C0B3060B5CF4A6E /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -192,7 +192,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		A1E049746C0B3060B5CF4A6E /* Set build number from git */ = {
+		A1E049746C0B3060B5CF4A6E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
